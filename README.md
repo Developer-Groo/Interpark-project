@@ -1,20 +1,17 @@
 # 🤔 Interpark project
 
+## 📌 Introduction
+**인터파크(Interpark)와 유사한 콘서트 예매 및 인기 콘서트 검색 시스템**을 구현하는 백엔드 프로젝트입니다.  
+주요 기능으로는 **콘서트 티켓 예매**, **인기 콘서트 검색**, **동시성 제어**, **캐시를 이용한 성능 최적화**가 포함됩니다.  
+대량의 트래픽을 처리하는 환경을 고려하여 **Redis Lock을 활용한 동시성 제어**, **In-memory Cache & Redis Cache 적용** 등의 성능 개선 전략을 적용하였습니다.
+
 ## ☑️ Index
-- [📌 Introduction](#-Introduction)
 - [🏁 Team](#-Team)
 - [📑 Commit Convention](#-Commit-Convention)
 - [🛠 Technology](#-Technology)
 - [🎯 Features](#-Features)
 - [🔗 ERD](#-ERD)
 - [🔥 Trouble Shouting](#-Trouble-Shouting)
-
-<br>
-
-## 📌 Introduction
-**인터파크(Interpark)와 유사한 콘서트 예매 및 인기 콘서트 검색 시스템**을 구현하는 백엔드 프로젝트입니다.  
-주요 기능으로는 **콘서트 티켓 예매**, **인기 콘서트 검색**, **동시성 제어**, **캐시를 이용한 성능 최적화**가 포함됩니다.  
-대량의 트래픽을 처리하는 환경을 고려하여 **Redis Lock을 활용한 동시성 제어**, **In-memory Cache & Redis Cache 적용** 등의 성능 개선 전략을 적용하였습니다.
 
 <br>
 
