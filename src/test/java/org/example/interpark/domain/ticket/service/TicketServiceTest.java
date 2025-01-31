@@ -42,10 +42,10 @@ class TicketServiceTest {
 
     @Test
     void 티켓생성() throws InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(30);
-        CountDownLatch latch = new CountDownLatch(30);
+        ExecutorService executor = Executors.newFixedThreadPool(100);
+        CountDownLatch latch = new CountDownLatch(10);
         int concertId = 3;
-        Concert concert = new Concert("콘서트",20);
+        Concert concert = new Concert("콘서트",1);
         User user = new User("gege","1234","gege@naver.com");
         Ticket ticket = new Ticket(user, concert);
 
@@ -53,7 +53,7 @@ class TicketServiceTest {
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
         when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
 
-        for (int i = 1; i <= 80; i++) {
+        for (int i = 1; i <= 10; i++) {
             executor.execute(() -> {
                 try {
                     ticketService.create(new TicketRequestDto(1, 3));
