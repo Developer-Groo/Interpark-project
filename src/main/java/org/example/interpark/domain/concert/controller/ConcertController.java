@@ -1,9 +1,16 @@
 package org.example.interpark.domain.concert.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
+import java.awt.print.Pageable;
 import lombok.RequiredArgsConstructor;
+import org.example.interpark.domain.concert.dto.response.ConcertSearchResponseDto;
+import org.example.interpark.domain.concert.service.ConcertService;
+import org.example.interpark.util.Page;
+import org.example.interpark.util.PageQuery;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -11,9 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class ConcertController {
 
+    private final ConcertService concertService;
+
     @GetMapping("/v1/concerts")
-    public ResponseEntity<String> getConcerts() {
-        return ResponseEntity.ok("");
+    public ResponseEntity<Page<ConcertSearchResponseDto>> getConcerts(@RequestParam(required = false) String keyword,
+        PageQuery pageQuery) {
+        return ResponseEntity.status(HttpServletResponse.SC_OK)
+            .body(concertService.searchConcerts(keyword, pageQuery));
     }
 
     @GetMapping("/v2/concerts")
