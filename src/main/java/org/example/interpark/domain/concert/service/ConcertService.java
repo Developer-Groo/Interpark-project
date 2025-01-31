@@ -25,7 +25,7 @@ public class ConcertService {
         Page<ConcertSearchResponseDto> concertList = concertRepositoryV1.searchConcerts(keyword,
                 pageQuery.toPageable())
             .map(concert -> new ConcertSearchResponseDto(concert.getId(), concert.getName(),
-                concert.getAmount()));
+                concert.getTotalAmount(), concert.getAvailableAmount()));
 
         return org.example.interpark.util.Page.from(concertList);
     }
@@ -38,7 +38,7 @@ public class ConcertService {
         Page<ConcertSearchResponseDto> concertList = concertRepositoryV1.searchConcerts(keyword,
                 pageQuery.toPageable())
             .map(concert -> new ConcertSearchResponseDto(concert.getId(), concert.getName(),
-                concert.getAmount()));
+                concert.getTotalAmount(), concert.getAvailableAmount()));
 
         return org.example.interpark.util.Page.from(concertList);
     }
