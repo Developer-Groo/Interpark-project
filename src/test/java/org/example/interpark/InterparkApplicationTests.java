@@ -9,5 +9,4 @@ class InterparkApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }

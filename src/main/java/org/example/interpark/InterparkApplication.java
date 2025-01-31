@@ -11,3 +11,12 @@ public class InterparkApplication {
     }
 
 }
+
+/**
+ *  domain
+ *  ㄴticket
+ *      ㄴ entity, repo, service...
+ *  ㄴuser
+ *      ㄴ entity, repo, service...
+ *  ㄴconcert
+ */
