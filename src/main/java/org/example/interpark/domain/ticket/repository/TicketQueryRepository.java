@@ -7,6 +7,4 @@ import org.springframework.data.domain.Pageable;
 
 public interface TicketQueryRepository {
     Page<Ticket> findAllTickets(Pageable pageable, TicketRequestDto query);
-
-    int countAllTicketsByConcertId(int concertId);
 }
