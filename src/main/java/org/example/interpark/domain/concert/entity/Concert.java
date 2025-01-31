@@ -13,7 +13,7 @@ import org.example.interpark.common.entity.BaseEntity;
 public class Concert extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     private String name;
 
