@@ -1,7 +1,6 @@
 package org.example.interpark.domain.concert.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
-import java.awt.print.Pageable;
 import lombok.RequiredArgsConstructor;
 import org.example.interpark.domain.concert.dto.response.ConcertSearchResponseDto;
 import org.example.interpark.domain.concert.service.ConcertService;
@@ -28,7 +27,8 @@ public class ConcertController {
     }
 
     @GetMapping("/v2/concerts")
-    public ResponseEntity<String> getConcertsByCache() {
-        return ResponseEntity.ok("");
+    public ResponseEntity<Page<ConcertSearchResponseDto>> getConcertsByCache(@RequestParam(required = false) String keyword,
+        PageQuery pageQuery) {
+        return ResponseEntity.ok(concertService.searchConcertsByCache(keyword, pageQuery));
     }
 }
