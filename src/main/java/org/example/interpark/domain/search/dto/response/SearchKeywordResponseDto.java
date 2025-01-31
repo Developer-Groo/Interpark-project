@@ -1,10 +1,15 @@
 package org.example.interpark.domain.search.dto.response;
 
+import java.util.List;
 import org.example.interpark.domain.search.entity.SearchKeyword;
 
-public record SearchKeywordResponseDto(String keyword) {
+public record SearchKeywordResponseDto(List<String> contents) {
 
-    public static SearchKeywordResponseDto toDto(SearchKeyword searchKeyword) {
-        return new SearchKeywordResponseDto(searchKeyword.getKeyword());
+    public static SearchKeywordResponseDto toDto(List<SearchKeyword> searchKeywords) {
+        List<String> kewordList = searchKeywords.stream()
+            .map(SearchKeyword::getKeyword)
+            .toList();
+
+        return new SearchKeywordResponseDto(kewordList);
     }
 }
