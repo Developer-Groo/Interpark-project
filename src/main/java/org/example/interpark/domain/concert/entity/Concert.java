@@ -18,11 +18,20 @@ public class Concert extends BaseEntity {
 
     private String name;
 
-    private int amount;
+    private int totalAmount;
+    private int availableAmount;
 
     @Builder
     public Concert(String name, int amount) {
         this.name = name;
-        this.amount = amount;
+        this.availableAmount = amount;
+    }
+
+    public int refundTicket() {
+        return this.availableAmount + 1;
+    }
+
+    public int sellTicket() {
+        return this.availableAmount - 1;
     }
 }
