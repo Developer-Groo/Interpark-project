@@ -42,5 +42,4 @@ public class InitData {
         concertRepository.saveAll(concertList);
 
     }
-
 }
