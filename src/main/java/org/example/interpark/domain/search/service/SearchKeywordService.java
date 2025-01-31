@@ -29,9 +29,8 @@ public class SearchKeywordService {
         );
     }
 
-    public List<SearchKeywordResponseDto> getTopSearchKeywords() {
-        return searchKeywordRepository.findTop10ByOrderByCountDesc().stream()
-            .map(SearchKeywordResponseDto::toDto).toList();
+    public SearchKeywordResponseDto getTopSearchKeywords() {
+        return SearchKeywordResponseDto.toDto(searchKeywordRepository.findTop10ByOrderByCountDesc());
     }
 
 }
