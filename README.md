@@ -76,7 +76,43 @@
 ## 🔗 ERD
 
 ~~~ mermaid
+erDiagram
+    USER {
+        int id PK
+        varchar name
+        varchar email
+        varchar password
+        timestamp created_at
+        timestamp updated_at
+    }
 
+    CONCERT {
+        int id PK
+        varchar name
+        int total_amount
+        int available_amount
+        varchar singer_name
+        timestamp open_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    TICKET {
+        int id PK
+        int user_id FK
+        int concert_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    SEARCH_KEYWORD {
+        int id PK
+        varchar keyword
+        int count
+    }
+
+    USER ||--o{ TICKET : "buys"
+    CONCERT ||--o{ TICKET : "has"
 ~~~
 
 <br>
