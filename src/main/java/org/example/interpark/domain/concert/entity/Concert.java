@@ -31,6 +31,6 @@ public class Concert extends BaseEntity {
     }
 
     public int sellTicket() {
-        return this.availableAmount - 1;
+        return this.availableAmount --;
     }
 }
