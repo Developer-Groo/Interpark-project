@@ -1,6 +1,9 @@
 package org.example.interpark.domain.concert.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,17 +14,29 @@ import org.example.interpark.common.entity.BaseEntity;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Concert extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String name;
 
-    private int amount;
+    private int totalAmount;
+    private int availableAmount;
 
     @Builder
     public Concert(String name, int amount) {
         this.name = name;
-        this.amount = amount;
+        this.availableAmount = amount;
+    }
+
+    public int refundTicket() {
+        this.availableAmount += 1;
+        return this.availableAmount;
+    }
+
+    public int sellTicket() {
+        this.availableAmount -= 1;
+        return this.availableAmount;
     }
 }
