@@ -16,7 +16,7 @@ public class SearchKeywordController {
     private final SearchKeywordService searchKeywordService;
 
     @GetMapping("/api/v1/keywords/popular")
-    public ResponseEntity<List<SearchKeywordResponseDto>> getTopSearchKeywords() {
+    public ResponseEntity<SearchKeywordResponseDto> getTopSearchKeywords() {
         return ResponseEntity.status(HttpServletResponse.SC_OK)
             .body(searchKeywordService.getTopSearchKeywords());
     }
