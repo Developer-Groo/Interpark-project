@@ -1,10 +1,8 @@
 package org.example.interpark.domain.ticket.repository;
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
@@ -25,8 +23,7 @@ public class RedisTicketLockRepository {
     true -> 생성 후 접근 / false -> 키가 이미 있음
      */
     public Boolean lock(String key) {
-        return redisTemplate.opsForValue()
-            .setIfAbsent(key, "lock", Duration.ofMillis(3000));
+        return redisTemplate.opsForValue().setIfAbsent(key, "lock", Duration.ofMillis(3000));
     }
 
 
