@@ -1,62 +1,75 @@
 package org.example.interpark.domain.ticket.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import org.example.interpark.domain.concert.entity.Concert;
 import org.example.interpark.domain.concert.repository.ConcertRepository;
-import org.example.interpark.domain.concert.repository.ConcertRepositoryV1;
+import org.example.interpark.domain.lock.repository.RedisLockRepository;
+import org.example.interpark.domain.lock.service.LockService;
 import org.example.interpark.domain.ticket.dto.TicketRequestDto;
-import org.example.interpark.domain.ticket.entity.Ticket;
 import org.example.interpark.domain.ticket.repository.TicketRepository;
 import org.example.interpark.domain.user.entity.User;
 import org.example.interpark.domain.user.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+import java.util.concurrent.*;
 
-@ExtendWith(MockitoExtension.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@SpringBootTest
+@ActiveProfiles("test")
+//@ExtendWith(MockitoExtension.class)
 class TicketServiceTest {
 
-    @InjectMocks
-    TicketService ticketService;
+    private static final Logger log = LoggerFactory.getLogger(TicketServiceTest.class);
 
-    @Mock
+    @Autowired
     ConcertRepository concertRepository;
-
-    @Mock
+    @Autowired
     UserRepository userRepository;
-
-    @Mock
+    @Autowired
     TicketRepository ticketRepository;
+    @Autowired
+    private TicketService ticketService;
+    @Autowired
+    private RedisLockRepository lockRepository;
+    @Autowired
+    private LockService lockService;
 
+    private Concert concert;
+    private User user;
+
+    @BeforeEach
+    void setUp() {
+        concert = new Concert("콘서트", 1);
+        concertRepository.save(concert);
+        user = new User("gege", "1234", "gege@naver.com");
+        userRepository.save(user);
+    }
+
+    @AfterEach
+    void tearDown() {
+        ticketRepository.deleteAll();
+        userRepository.deleteAll();
+        concertRepository.deleteAll();
+    }
 
     @Test
     void 티켓생성() throws InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(100);
-        CountDownLatch latch = new CountDownLatch(10);
-        int concertId = 3;
-        Concert concert = new Concert("콘서트",1);
-        User user = new User("gege","1234","gege@naver.com");
-        Ticket ticket = new Ticket(user, concert);
+        ExecutorService executorService = new ThreadPoolExecutor(10, 100, 60L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(10));
 
-        when(concertRepository.findById(concertId)).thenReturn(Optional.of(concert));
-        when(userRepository.findById(1)).thenReturn(Optional.of(user));
-        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
+        CountDownLatch latch = new CountDownLatch(10);
 
         for (int i = 1; i <= 10; i++) {
-            executor.execute(() -> {
+            executorService.execute(() -> {
                 try {
-                    ticketService.create(new TicketRequestDto(1, 3));
+                    ticketService.createAsync(new TicketRequestDto(user.getId(), concert.getId())).join();
                 } catch (Exception e) {
                     System.out.println(e);
                 } finally {
@@ -66,10 +79,10 @@ class TicketServiceTest {
         }
 
         latch.await();
-        executor.shutdown();
+        executorService.shutdown();
 
-        Integer availableTicket = concert.getAvailableAmount();
-        assertEquals(0, availableTicket);
+        Concert updatedConcert = concertRepository.findById(concert.getId())
+                .orElseThrow(() -> new RuntimeException("Concert not found"));
+        assertEquals(0, updatedConcert.getAvailableAmount());
     }
-
 }
