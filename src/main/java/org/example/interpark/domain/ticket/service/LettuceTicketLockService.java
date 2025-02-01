@@ -1,6 +1,5 @@
 package org.example.interpark.domain.ticket.service;
 
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.interpark.domain.ticket.dto.TicketRequestDto;
@@ -27,16 +26,15 @@ public class LettuceTicketLockService {
         int currentTry = 0;
         while (!(redisTicketLockRepository.lock(key)) && currentTry < maxTry) {
             try {
-                Thread.sleep(1000);
-                log.info(Thread.currentThread().getId()+"  :   " +currentTry);
-
+                Thread.sleep(100);
+                log.info(Thread.currentThread().getId() + "  :  " + currentTry);
                 currentTry++;
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
 
-        if(currentTry >= maxTry) {
+        if (currentTry >= maxTry) {
             throw new RuntimeException("ticket sell fail");
         }
 
