@@ -16,7 +16,7 @@ public class LockService {
 
     private final RedisLockRepository redisLockRepository;
     private static final int MAX_RETRY = 10;
-    private static final long RETRY_DELAY_MS = 100; // 재시도 사이의 지연 시간
+    private static final long RETRY_DELAY_MS = 100;
 
     public <T> CompletableFuture<T> withLock(int key, Supplier<CompletableFuture<T>> logic) {
         return attemptLock(key, 1)
@@ -47,7 +47,6 @@ public class LockService {
                                         () -> null,
                                         CompletableFuture.delayedExecutor(RETRY_DELAY_MS, TimeUnit.MILLISECONDS))
                                 .thenCompose(ignored -> {
-                                    log.info("Lock retry {}/{} for key {}", attempt, MAX_RETRY, key);
                                     return attemptLock(key, attempt + 1);
                                 });
                     } else {

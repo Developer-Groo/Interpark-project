@@ -73,10 +73,8 @@ public class TicketService {
             throw new RuntimeException("Cannot sell ticket. Available amount is less than 0.");
         }
 
-        log.info("Saving ticket with concert id: {}", ticket.getConcert().getId());
         concert.sellTicket();
         concertRepository.save(concert);
-        log.info("콘서트 남은 티켓: "+String.valueOf(concert.getAvailableAmount()));
         return ticketRepository.save(ticket);
     }
 }

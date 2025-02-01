@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles("test")
-//@ExtendWith(MockitoExtension.class)
 class TicketServiceTest {
 
     private static final Logger log = LoggerFactory.getLogger(TicketServiceTest.class);
