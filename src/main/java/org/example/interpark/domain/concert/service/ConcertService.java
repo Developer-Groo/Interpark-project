@@ -25,7 +25,7 @@ public class ConcertService {
     }
 
     /**
-     * 검색어 Local Memory Cache 적용
+     * 검색어 Local Memory Cache & Redis Cache 적용
      */
     @Cacheable(value = "concerts", key = "#keyword")
     public org.example.interpark.util.Page<ConcertSearchResponseDto> searchConcertsByCache(
