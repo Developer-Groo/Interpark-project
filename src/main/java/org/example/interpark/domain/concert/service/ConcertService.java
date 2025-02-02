@@ -17,7 +17,7 @@ public class ConcertService {
     private final ConcertQueryRepository concertQueryRepository;
 
     /**
-     * 검색어 Cache 적용 X
+     * Cache 적용 X
      */
     public org.example.interpark.util.Page<ConcertSearchResponseDto> searchConcerts(String keyword,
         PageQuery pageQuery) {
@@ -25,7 +25,7 @@ public class ConcertService {
     }
 
     /**
-     * 검색어 Local Memory Cache & Redis Cache 적용
+     * Local Memory Cache || Redis Cache 적용
      */
     @Cacheable(value = "concerts", key = "#keyword")
     public org.example.interpark.util.Page<ConcertSearchResponseDto> searchConcertsByCache(
