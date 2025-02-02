@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class ConcertRepositoryV1 {
+public class ConcertQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
