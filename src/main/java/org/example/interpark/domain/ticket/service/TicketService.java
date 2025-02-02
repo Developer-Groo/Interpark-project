@@ -48,13 +48,18 @@ public class TicketService {
             () -> new RuntimeException("Cannot find user id: " + ticketRequestDto.userId()));
 
         ticketRock(concert.getId(),key);
-        concert.sellTicket();
-        concertRepository.save(concert);
-        Ticket ticket = new Ticket(user, concert);
-        ticket = ticketRepository.save(ticket);
-        ticketUnlock(key);
+        try{
+            concert.sellTicket();
+            concertRepository.save(concert);
+            Ticket ticket = new Ticket(user, concert);
+            ticket = ticketRepository.save(ticket);
+            return TicketResponseDto.from(ticket);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            ticketUnlock(key);
+        }
 
-        return TicketResponseDto.from(ticket);
     }
 
     public void ticketRock(int concertId,String key) {
