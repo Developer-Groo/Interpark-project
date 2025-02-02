@@ -53,6 +53,6 @@ public class ConcertController {
         PageQuery pageQuery) {
         concertPopularSearchService.incrementSearchCount(keyword);
         return ResponseEntity.status(HttpServletResponse.SC_OK)
-            .body(concertService.searchConcerts(keyword, pageQuery));
+            .body(concertService.searchConcertsByCache(keyword, pageQuery));
     }
 }
