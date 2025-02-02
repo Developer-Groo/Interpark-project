@@ -22,15 +22,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
-
 @SpringBootTest
-class TicketServiceTest {
+public class TicketServiceTest2 {
 
     @Autowired
     TicketService ticketService;
 
     @Autowired
     LockService lockService;
+
+    @Autowired
+    LockRepository lockRepository;
 
     @Autowired
     ConcertRepository concertRepository;
@@ -40,9 +42,6 @@ class TicketServiceTest {
 
     @Autowired
     TicketRepository ticketRepository;
-
-    @Autowired
-    LockRepository lockRepository;
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;
@@ -66,20 +65,18 @@ class TicketServiceTest {
         userRepository.deleteAll();
     }
 
-
     @Test
     void 티켓생성() throws InterruptedException {
-        ExecutorService executorService = new ThreadPoolExecutor(20, 20, 60L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(20));
+        ExecutorService executorService = new ThreadPoolExecutor(200, 200, 60L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(200));
 
-        CountDownLatch latch = new CountDownLatch(20);
+        CountDownLatch latch = new CountDownLatch(200);
 
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i <= 200; i++) {
             executorService.execute(() -> {
                 try {
 //                    ticketService.create(new TicketRequestDto(1, 3));
-                    ticketService.create(
-                        new TicketRequestDto(user.getId(), concert.getId()));
+                    ticketService.create(new TicketRequestDto(user.getId(), concert.getId()));
                     concert = concertRepository.findById(concert.getId())
                         .orElseThrow(() -> new RuntimeException("일단 봅시다."));
                 } catch (Exception e) {
@@ -96,4 +93,5 @@ class TicketServiceTest {
         Integer availableTicket = concert.getAvailableAmount();
         assertEquals(0, availableTicket);
     }
+
 }

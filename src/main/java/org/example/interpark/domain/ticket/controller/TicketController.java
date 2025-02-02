@@ -4,7 +4,6 @@ package org.example.interpark.domain.ticket.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.interpark.domain.ticket.dto.TicketRequestDto;
 import org.example.interpark.domain.ticket.dto.TicketResponseDto;
-import org.example.interpark.domain.ticket.service.LettuceTicketLockService;
 import org.example.interpark.domain.ticket.service.TicketService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class TicketController {
 
     private final TicketService service;
-    private final LettuceTicketLockService ticketLockService;
 
     @GetMapping("/{id}")
     public ResponseEntity<TicketResponseDto> find(@PathVariable int concert_id) {
@@ -29,6 +27,6 @@ public class TicketController {
 
     @PostMapping
     public ResponseEntity<TicketResponseDto> create(@RequestBody TicketRequestDto dto) {
-        return ResponseEntity.ok().body(ticketLockService.decrease(dto));
+        return ResponseEntity.ok().body(service.create(dto));
     }
 }

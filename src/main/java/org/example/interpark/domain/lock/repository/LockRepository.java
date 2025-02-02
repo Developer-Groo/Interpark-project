@@ -1,4 +1,4 @@
-package org.example.interpark.domain.ticket.repository;
+package org.example.interpark.domain.lock.repository;
 
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
-public class RedisTicketLockRepository {
-    /*
+public class LockRepository {
+/*
     Redis 분산 락 구현 용 Repository
     1. Lock 용 키 생성 concertId:1 형태
     2. Lock 키가 존재하면 접근 불가 +  (획득 시도 텀 Thread.sleep , 획득 시도 횟수 제한)
@@ -30,5 +30,4 @@ public class RedisTicketLockRepository {
     public Boolean unlock(Object key) {
         return redisTemplate.delete(key.toString());
     }
-
 }
