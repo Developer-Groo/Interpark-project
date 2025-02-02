@@ -17,6 +17,7 @@ public class ConcertService {
 
     private final ConcertRepositoryV1 concertRepositoryV1;
     private final SearchKeywordService searchKeywordService;
+    private final ConcertPopularSearchService concertPopularSearchService;
 
     public org.example.interpark.util.Page<ConcertSearchResponseDto> searchConcerts(String keyword,
         PageQuery pageQuery) {
@@ -34,6 +35,8 @@ public class ConcertService {
     public org.example.interpark.util.Page<ConcertSearchResponseDto> searchConcertsByCache(
         String keyword, PageQuery pageQuery) {
         searchKeywordService.saveSearchKeyword(keyword);
+
+        concertPopularSearchService.incrementSearchCount(keyword);
 
         Page<ConcertSearchResponseDto> concertList = concertRepositoryV1.searchConcerts(keyword,
                 pageQuery.toPageable())
