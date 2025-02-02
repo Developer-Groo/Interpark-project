@@ -10,7 +10,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.example.interpark.domain.concert.entity.Concert;
 import org.example.interpark.domain.concert.repository.ConcertRepository;
-import org.example.interpark.domain.concert.repository.ConcertRepositoryV1;
 import org.example.interpark.domain.ticket.dto.TicketRequestDto;
 import org.example.interpark.domain.ticket.entity.Ticket;
 import org.example.interpark.domain.ticket.repository.TicketRepository;
@@ -21,7 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.RedisTemplate;
 
 
 @ExtendWith(MockitoExtension.class)
