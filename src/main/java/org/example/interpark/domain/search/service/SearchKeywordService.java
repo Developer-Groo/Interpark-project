@@ -1,6 +1,5 @@
 package org.example.interpark.domain.search.service;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.interpark.domain.search.dto.response.SearchKeywordResponseDto;
 import org.example.interpark.domain.search.entity.SearchKeyword;
