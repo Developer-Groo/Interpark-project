@@ -8,18 +8,23 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RedisSearchKeywordService {
 
     private final RedisTemplate<String, String> redisTemplateV2;
     private static final String POPULAR_SEARCH_KEY = "popular_keywords"; // ZSet Key
 
+    @Transactional
     public void incrementSearchCount(String keyword) {
-        log.info("인기 검색어 증가: {}", keyword);
-        redisTemplateV2.opsForZSet().incrementScore(POPULAR_SEARCH_KEY, keyword, 1);
+        if (keyword != null && !keyword.isBlank()) {
+            log.info("인기 검색어 증가: {}", keyword);
+            redisTemplateV2.opsForZSet().incrementScore(POPULAR_SEARCH_KEY, keyword, 1);
+        }
     }
 
     public List<String> getTopSearchKeywords() {
