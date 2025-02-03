@@ -27,6 +27,8 @@ public class TicketService {
         return TicketResponseDto.from(ticket);
     }
 
+    @Transactional
+    @Retryable(maxAttempts = 10)
     public TicketResponseDto create(TicketRequestDto ticketRequestDto) {
         if (!ticketRequestDto.isValid()) {
             throw new RuntimeException("Invalid ticket request");
@@ -42,18 +44,14 @@ public class TicketService {
         User user = userRepository.findById(ticketRequestDto.userId()).orElseThrow(
             () -> new RuntimeException("Cannot find user id: " + ticketRequestDto.userId()));
 
-        return TicketResponseDto.from(sellTicket(concert, user));
-
-    }
-
-    @Transactional
-    @Retryable(maxAttempts = 10)
-    public Ticket sellTicket(Concert concert, User user) {
         concert.sellTicket();
-        concertRepository.save(concert);
+//        concertRepository.save(concert);
         Ticket ticket = new Ticket(user, concert);
         ticket = ticketRepository.save(ticket);
-        return ticket;
+
+        return TicketResponseDto.from(ticket);
+
     }
+
 
 }

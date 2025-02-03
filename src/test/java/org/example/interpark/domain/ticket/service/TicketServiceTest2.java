@@ -9,8 +9,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.example.interpark.domain.concert.entity.Concert;
 import org.example.interpark.domain.concert.repository.ConcertRepository;
-import org.example.interpark.domain.lock.repository.LockRepository;
-import org.example.interpark.domain.lock.service.LockService;
 import org.example.interpark.domain.ticket.dto.TicketRequestDto;
 import org.example.interpark.domain.ticket.repository.TicketRepository;
 import org.example.interpark.domain.user.entity.User;
@@ -27,12 +25,6 @@ public class TicketServiceTest2 {
 
     @Autowired
     TicketService ticketService;
-
-    @Autowired
-    LockService lockService;
-
-    @Autowired
-    LockRepository lockRepository;
 
     @Autowired
     ConcertRepository concertRepository;
