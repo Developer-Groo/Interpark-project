@@ -1,8 +1,12 @@
 package org.example.interpark.domain.ticket.repository;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.interpark.domain.concert.entity.Concert;
 import org.example.interpark.domain.ticket.dto.TicketRequestDto;
 import org.example.interpark.domain.ticket.entity.Ticket;
 import org.example.interpark.util.QuerydslUtil;
@@ -12,9 +16,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.example.interpark.domain.ticket.entity.QTicket.ticket;
+import static org.example.interpark.domain.concert.entity.QConcert.concert;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class TicketQueryRepositoryImpl implements TicketQueryRepository {
@@ -37,5 +44,16 @@ public class TicketQueryRepositoryImpl implements TicketQueryRepository {
                 .where(conditions.toArray(new BooleanExpression[0]));
 
         return QuerydslUtil.fetchPage(jpaQuery, ticket, pageable);
+    }
+
+    @Override
+    public Boolean existsReservableTicket(int concertId) {
+        Integer result = queryFactory
+                .select(concert.availableAmount)
+                .from(concert)
+                .where(concert.id.eq(concertId))
+                .fetchOne();
+
+        return Optional.ofNullable(result).orElse(0) > 0;
     }
 }
