@@ -5,7 +5,7 @@ import org.example.interpark.domain.search.entity.SearchKeyword;
 
 public record SearchKeywordResponseDto(List<String> contents) {
 
-    public static SearchKeywordResponseDto toDto(List<SearchKeyword> searchKeywords) {
+    public static SearchKeywordResponseDto from(List<SearchKeyword> searchKeywords) {
         List<String> kewordList = searchKeywords.stream()
             .map(SearchKeyword::getKeyword)
             .toList();
