@@ -3,7 +3,6 @@ package org.example.interpark.domain.ticket.service;
 import lombok.RequiredArgsConstructor;
 import org.example.interpark.domain.concert.entity.Concert;
 import org.example.interpark.domain.concert.repository.ConcertRepository;
-import org.example.interpark.domain.lock.service.LockService;
 import org.example.interpark.domain.ticket.dto.TicketRequestDto;
 import org.example.interpark.domain.ticket.dto.TicketResponseDto;
 import org.example.interpark.domain.ticket.entity.Ticket;
@@ -43,7 +42,7 @@ public class TicketService {
         User user = userRepository.findById(ticketRequestDto.userId()).orElseThrow(
             () -> new RuntimeException("Cannot find user id: " + ticketRequestDto.userId()));
 
-        return TicketResponseDto.from(sellTicket(concert,user));
+        return TicketResponseDto.from(sellTicket(concert, user));
 
     }
 
