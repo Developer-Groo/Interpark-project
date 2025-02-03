@@ -54,7 +54,7 @@ public class ConcertController {
         @RequestParam(required = false) String keyword, PageQuery pageQuery) {
         searchKeywordService.saveSearchKeyword(keyword);
         return ResponseEntity.status(HttpServletResponse.SC_OK)
-            .body(concertCacheService.searchConcertsByCache(keyword, pageQuery));
+            .body(concertCacheService.searchConcertsByInMemoryCache(keyword, pageQuery));
     }
 
     /**
@@ -65,7 +65,7 @@ public class ConcertController {
         @RequestParam(required = false) String keyword, PageQuery pageQuery) {
         redisSearchKeywordService.incrementSearchCount(keyword);
         return ResponseEntity.status(HttpServletResponse.SC_OK)
-            .body(concertCacheService.searchConcertsByCache(keyword, pageQuery));
+            .body(concertCacheService.searchConcertsByRedisCache(keyword, pageQuery));
     }
 
     /**

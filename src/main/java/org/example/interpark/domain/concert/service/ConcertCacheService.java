@@ -22,10 +22,23 @@ public class ConcertCacheService {
     private final ConcertCacheRepository concertCacheRepository;
 
     /**
-     * Local Memory Cache || Redis Cache 적용
+     * Local Memory Cache 적용
+     */
+    @Cacheable(value = "inMemoryCache", key = "#keyword")
+    public org.example.interpark.util.Page<ConcertSearchResponseDto> searchConcertsByInMemoryCache(
+        String keyword, PageQuery pageQuery) {
+        Page<ConcertSearchResponseDto> concertList = concertQueryRepository.searchConcerts(keyword,
+                pageQuery.toPageable())
+            .map(ConcertSearchResponseDto::from);
+
+        return org.example.interpark.util.Page.from(concertList);
+    }
+
+    /**
+     * Redis Cache 적용
      */
     @Cacheable(value = "concerts", key = "#keyword")
-    public org.example.interpark.util.Page<ConcertSearchResponseDto> searchConcertsByCache(
+    public org.example.interpark.util.Page<ConcertSearchResponseDto> searchConcertsByRedisCache(
         String keyword, PageQuery pageQuery) {
         Page<ConcertSearchResponseDto> concertList = concertQueryRepository.searchConcerts(keyword,
                 pageQuery.toPageable())
