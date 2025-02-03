@@ -47,7 +47,7 @@ public class TicketService {
         User user = userRepository.findById(ticketRequestDto.userId()).orElseThrow(
             () -> new RuntimeException("Cannot find user id: " + ticketRequestDto.userId()));
 
-        ticketRock(concert.getId(),key);
+        lockService.trylock(key);
         try{
             concert.sellTicket();
             concertRepository.save(concert);
@@ -57,23 +57,9 @@ public class TicketService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            ticketUnlock(key);
+            lockService.unlock(key);
         }
 
     }
 
-    public void ticketRock(int concertId,String key) {
-
-        Concert concert = concertRepository.findById(concertId).orElseThrow(
-            () -> new RuntimeException("Cannot find concert id: " + concertId));
-
-        if (concert.getAvailableAmount() <= 0) {
-            throw new RuntimeException("Cannot sell ticket. Available amount is less than 0.");
-        }
-        lockService.trylock(key);
-    }
-
-    public void ticketUnlock(String key) {
-        lockService.unlock(key);
-    }
 }
