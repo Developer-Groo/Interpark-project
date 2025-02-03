@@ -32,7 +32,7 @@ public class ConcertController {
   private final ConcertService concertService;
   private final SearchKeywordService searchKeywordService;
   private final RedisSearchKeywordService redisSearchKeywordService;
-  private final ConcertCacheService concertCacheService;;
+  private final ConcertCacheService concertCacheService;
 
   /**
    * Cache 를 적용하지 않은 API
