@@ -1,18 +1,23 @@
 package org.example.interpark.domain.concert.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.interpark.common.entity.BaseEntity;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Entity
+@Table(name = "concert")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Concert extends BaseEntity {
 
     @Id
@@ -25,9 +30,16 @@ public class Concert extends BaseEntity {
     private int availableAmount;
 
     @Builder
-    public Concert(String name, int amount) {
+    public Concert(String name,int totalAmount, int availableAmount) {
         this.name = name;
-        this.availableAmount = amount;
+        this.totalAmount = totalAmount;
+        this.availableAmount = availableAmount;
+    }
+
+    public void updateConcert(String name, int totalAmount, int availableAmount) {
+        this.name = name;
+        this.totalAmount = totalAmount;
+        this.availableAmount = availableAmount;
     }
 
     public int refundTicket() {

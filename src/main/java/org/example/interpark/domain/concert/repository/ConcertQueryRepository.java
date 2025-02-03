@@ -29,4 +29,12 @@ public class ConcertQueryRepository {
 
         return QuerydslUtil.fetchPage(result, concert, pageable);
     }
+
+    // 콘서트 전체 조회
+    public Page<Concert> getAllConcerts(Pageable pageable) {
+        JPAQuery<Concert> query = queryFactory
+            .selectFrom(concert);
+
+        return QuerydslUtil.fetchPage(query, concert, pageable);
+    }
 }

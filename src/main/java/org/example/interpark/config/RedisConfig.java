@@ -1,6 +1,7 @@
 package org.example.interpark.config;
 
 import java.time.Duration;
+import org.example.interpark.domain.concert.dto.response.ConcertSearchResponseDto;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
@@ -37,6 +39,24 @@ public class RedisConfig {
     template.setKeySerializer(new StringRedisSerializer());  // 키를 String으로 저장
     template.setValueSerializer(new StringRedisSerializer()); // 값을 String으로 저장
     return template;
+  }
+
+  @Bean
+  public RedisTemplate<String, Object> redisTemplateV3(RedisConnectionFactory connectionFactory) {
+    RedisTemplate<String, Object> template = new RedisTemplate<>();
+    template.setConnectionFactory(connectionFactory);
+
+    template.setKeySerializer(new StringRedisSerializer());
+    template.setHashKeySerializer(new StringRedisSerializer());
+    template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer()); // JSON 직렬화 적용
+
+    template.afterPropertiesSet();
+    return template;
+  }
+
+  @Bean
+  public HashOperations<String, String, ConcertSearchResponseDto> hashOperations(RedisTemplate<String, Object> redisTemplate) {
+    return redisTemplate.opsForHash();
   }
 
   @Bean
