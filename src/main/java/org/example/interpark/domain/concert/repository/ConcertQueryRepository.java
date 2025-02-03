@@ -25,16 +25,10 @@ public class ConcertQueryRepository {
             builder.and(concert.name.containsIgnoreCase(keyword));
         }
 
-        JPAQuery<Concert> result = queryFactory.selectFrom(concert).where(builder);
+        JPAQuery<Concert> result = queryFactory
+            .selectFrom(concert)
+            .where(builder);
 
         return QuerydslUtil.fetchPage(result, concert, pageable);
-    }
-
-    // 콘서트 전체 조회
-    public Page<Concert> getAllConcerts(Pageable pageable) {
-        JPAQuery<Concert> query = queryFactory
-            .selectFrom(concert);
-
-        return QuerydslUtil.fetchPage(query, concert, pageable);
     }
 }
