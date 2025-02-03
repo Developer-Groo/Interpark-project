@@ -26,7 +26,8 @@ public class TicketController {
     }
 
     @PostMapping
-    public ResponseEntity<TicketResponseDto> create(@RequestBody TicketRequestDto dto) {
+    public ResponseEntity<TicketResponseDto> create(@RequestBody TicketRequestDto dto)
+        throws Exception {
         return ResponseEntity.ok().body(service.create(dto));
     }
 }

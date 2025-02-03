@@ -27,6 +27,32 @@ public class TicketService {
         return TicketResponseDto.from(ticket);
     }
 
+//    @Transactional
+//    @Retryable(maxAttempts = 10)
+//    public TicketResponseDto create(TicketRequestDto ticketRequestDto) {
+//        if (!ticketRequestDto.isValid()) {
+//            throw new RuntimeException("Invalid ticket request");
+//        }
+//
+//        Concert concert = concertRepository.findById(ticketRequestDto.concertId()).orElseThrow(
+//            () -> new RuntimeException("Cannot find concert id: " + ticketRequestDto.concertId()));
+//
+//        if (concert.getAvailableAmount() <= 0) {
+//            throw new RuntimeException("Cannot sell ticket. Available amount is less than 0.");
+//        }
+//
+//        User user = userRepository.findById(ticketRequestDto.userId()).orElseThrow(
+//            () -> new RuntimeException("Cannot find user id: " + ticketRequestDto.userId()));
+//
+//        concert.sellTicket();
+////        concertRepository.save(concert);
+//        Ticket ticket = new Ticket(user, concert);
+//        ticket = ticketRepository.save(ticket);
+//
+//        return TicketResponseDto.from(ticket);
+//
+//    }
+
     @Transactional
     @Retryable(maxAttempts = 10)
     public TicketResponseDto create(TicketRequestDto ticketRequestDto) {
@@ -45,7 +71,7 @@ public class TicketService {
             () -> new RuntimeException("Cannot find user id: " + ticketRequestDto.userId()));
 
         concert.sellTicket();
-//        concertRepository.save(concert);
+        concertRepository.save(concert);
         Ticket ticket = new Ticket(user, concert);
         ticket = ticketRepository.save(ticket);
 

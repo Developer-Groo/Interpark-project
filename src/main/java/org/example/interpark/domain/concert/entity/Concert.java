@@ -43,10 +43,7 @@ public class Concert extends BaseEntity {
     }
 
 
-    @Transactional
-    @Retryable(maxAttempts = 10)
-    public int sellTicket() {
+    public void sellTicket() {
         this.availableAmount -= 1;
-        return this.availableAmount;
     }
 }

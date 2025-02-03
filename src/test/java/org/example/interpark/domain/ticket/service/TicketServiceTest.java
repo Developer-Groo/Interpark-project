@@ -36,7 +36,6 @@ class TicketServiceTest {
     @Autowired
     TicketRepository ticketRepository;
 
-
     Concert concert;
 
     User user;
