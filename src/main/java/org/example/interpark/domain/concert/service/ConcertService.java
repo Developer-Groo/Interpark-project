@@ -8,27 +8,34 @@ import org.example.interpark.domain.concert.dto.response.ConcertSearchResponseDt
 import org.example.interpark.domain.concert.entity.Concert;
 import org.example.interpark.domain.concert.repository.ConcertQueryRepository;
 import org.example.interpark.domain.concert.repository.ConcertRepository;
-import org.example.interpark.domain.search.service.RedisSearchKeywordService;
-import org.example.interpark.domain.search.service.SearchKeywordService;
 import org.example.interpark.util.Page;
 import org.example.interpark.util.PageQuery;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class ConcertService {
 
     private final ConcertQueryRepository concertQueryRepository;
-    private final ConcertCacheService concertCacheService;
     private final ConcertRepository concertRepository;
-    private final SearchKeywordService searchKeywordService;
-    private final RedisSearchKeywordService redisSearchKeywordService;
 
+    /**
+     * Cache 를 적용하지 않은 콘서트 조회
+     */
+    public Page<ConcertSearchResponseDto> searchConcerts(String keyword,
+        PageQuery pageQuery) {
+        org.springframework.data.domain.Page<ConcertSearchResponseDto> concertList = concertQueryRepository.searchConcerts(
+                keyword, pageQuery.toPageable())
+            .map(ConcertSearchResponseDto::from);
+        return Page.from(concertList);
+    }
 
-    // 콘서트 생성
+    /**
+     * 콘서트 생성
+     */
+    @Transactional
     public ConcertResponseDto createConcert(ConcertCreateRequestDto request) {
         Concert concert = concertRepository.save(
             Concert.builder()
@@ -40,36 +47,21 @@ public class ConcertService {
         return ConcertResponseDto.from(concert);
     }
 
+    /**
+     * 모든 콘서트 조회
+     */
     public Page<ConcertSearchResponseDto> getAllConcerts(PageQuery pageQuery) {
-        Pageable pageable = pageQuery.toPageable();
-
-        var concertList = concertQueryRepository.getAllConcerts(pageable)
-            .map(concert -> new ConcertSearchResponseDto(
-                concert.getId(),
-                concert.getName(),
-                concert.getTotalAmount(),
-                concert.getAvailableAmount()
-            ));
+        org.springframework.data.domain.Page<ConcertSearchResponseDto> concertList = concertRepository.findAll(
+                pageQuery.toPageable())
+            .map(ConcertSearchResponseDto::from);
 
         return Page.from(concertList);
     }
 
     /**
-     * Cache 적용 X
+     * 콘서트 수정
      */
-    public org.example.interpark.util.Page<ConcertSearchResponseDto> searchConcerts(String keyword,
-        PageQuery pageQuery) {
-        searchKeywordService.saveSearchKeyword(keyword);
-
-        org.springframework.data.domain.Page<ConcertSearchResponseDto> concertList = concertQueryRepository.searchConcerts(keyword,
-                pageQuery.toPageable())
-            .map(concert -> new ConcertSearchResponseDto(concert.getId(), concert.getName(),
-                concert.getTotalAmount(), concert.getAvailableAmount()));
-
-        return org.example.interpark.util.Page.from(concertList);
-    }
-
-    // 콘서트 수정
+    @Transactional
     public ConcertResponseDto updateConcert(Integer id, ConcertUpdateRequestDto request) {
         Concert concert = concertRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("해당 콘서트가 없습니다."));
@@ -78,16 +70,11 @@ public class ConcertService {
         return ConcertResponseDto.from(concert);
     }
 
-    // 콘서트 삭제
+    /**
+     * 콘서트 삭제
+     */
+    @Transactional
     public void deleteConcert(Integer id) {
         concertRepository.deleteById(id);
-    }
-
-    public org.example.interpark.util.Page<ConcertSearchResponseDto> searchConcertsWithCount(
-        String keyword, PageQuery pageQuery) {
-        if (keyword != null && !keyword.isBlank()) {
-            redisSearchKeywordService.incrementSearchCount(keyword);
-        }
-        return concertCacheService.searchConcertsByCache(keyword,pageQuery);
     }
 }
