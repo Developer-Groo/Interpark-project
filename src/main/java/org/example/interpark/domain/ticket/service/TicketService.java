@@ -29,7 +29,6 @@ public class TicketService {
         return TicketResponseDto.from(ticket);
     }
 
-    @Transactional
     public TicketResponseDto create(TicketRequestDto ticketRequestDto) {
         if (!ticketRequestDto.isValid()) {
             throw new RuntimeException("Invalid ticket request");
@@ -49,6 +48,11 @@ public class TicketService {
 
         lockService.trylock(key);
         try{
+            concert = concertRepository.findById(ticketRequestDto.concertId()).orElseThrow(
+                () -> new RuntimeException("Cannot find concert id: " + ticketRequestDto.concertId()));
+            if (concert.getAvailableAmount() <= 0) {
+                throw new RuntimeException("Cannot sell ticket. Available amount is less than 0.");
+            }
             concert.sellTicket();
             concertRepository.save(concert);
             Ticket ticket = new Ticket(user, concert);
