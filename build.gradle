@@ -45,6 +45,12 @@ dependencies {
 
     // cache
     implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+    // Retry
+    implementation "org.springframework.retry:spring-retry"
+
+    // AOP
+    runtimeOnly 'org.springframework.boot:spring-boot-starter-aop'
 }
 
 tasks.named('test') {

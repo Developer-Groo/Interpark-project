@@ -1,6 +1,5 @@
 package org.example.interpark.domain.ticket.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.interpark.domain.concert.entity.Concert;
 import org.example.interpark.domain.concert.repository.ConcertRepository;
@@ -11,8 +10,9 @@ import org.example.interpark.domain.ticket.entity.Ticket;
 import org.example.interpark.domain.ticket.repository.TicketRepository;
 import org.example.interpark.domain.user.entity.User;
 import org.example.interpark.domain.user.repository.UserRepository;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +21,6 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final ConcertRepository concertRepository;
     private final UserRepository userRepository;
-    private final LockService lockService;
 
     public TicketResponseDto find(int id) {
         Ticket ticket = ticketRepository.findById(id)
@@ -37,8 +36,6 @@ public class TicketService {
         Concert concert = concertRepository.findById(ticketRequestDto.concertId()).orElseThrow(
             () -> new RuntimeException("Cannot find concert id: " + ticketRequestDto.concertId()));
 
-        String key = "concertId:" + concert.getId();
-
         if (concert.getAvailableAmount() <= 0) {
             throw new RuntimeException("Cannot sell ticket. Available amount is less than 0.");
         }
@@ -46,24 +43,18 @@ public class TicketService {
         User user = userRepository.findById(ticketRequestDto.userId()).orElseThrow(
             () -> new RuntimeException("Cannot find user id: " + ticketRequestDto.userId()));
 
-        lockService.trylock(key);
-        try{
-            concert = concertRepository.findById(ticketRequestDto.concertId()).orElseThrow(
-                () -> new RuntimeException("Cannot find concert id: " + ticketRequestDto.concertId()));
-            if (concert.getAvailableAmount() <= 0) {
-                throw new RuntimeException("Cannot sell ticket. Available amount is less than 0.");
-            }
-            concert.sellTicket();
-            concertRepository.save(concert);
-            Ticket ticket = new Ticket(user, concert);
-            ticket = ticketRepository.save(ticket);
-            return TicketResponseDto.from(ticket);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            lockService.unlock(key);
-        }
+        return TicketResponseDto.from(sellTicket(concert,user));
 
+    }
+
+    @Transactional
+    @Retryable(maxAttempts = 10)
+    public Ticket sellTicket(Concert concert, User user) {
+        concert.sellTicket();
+        concertRepository.save(concert);
+        Ticket ticket = new Ticket(user, concert);
+        ticket = ticketRepository.save(ticket);
+        return ticket;
     }
 
 }

@@ -77,7 +77,6 @@ class TicketServiceTest {
         for (int i = 1; i <= 20; i++) {
             executorService.execute(() -> {
                 try {
-//                    ticketService.create(new TicketRequestDto(1, 3));
                     ticketService.create(
                         new TicketRequestDto(user.getId(), concert.getId()));
                     concert = concertRepository.findById(concert.getId())
