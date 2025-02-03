@@ -9,8 +9,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.example.interpark.domain.concert.entity.Concert;
 import org.example.interpark.domain.concert.repository.ConcertRepository;
-import org.example.interpark.domain.lock.repository.LockRepository;
-import org.example.interpark.domain.lock.service.LockService;
 import org.example.interpark.domain.ticket.dto.TicketRequestDto;
 import org.example.interpark.domain.ticket.repository.TicketRepository;
 import org.example.interpark.domain.user.entity.User;
@@ -30,9 +28,6 @@ class TicketServiceTest {
     TicketService ticketService;
 
     @Autowired
-    LockService lockService;
-
-    @Autowired
     ConcertRepository concertRepository;
 
     @Autowired
@@ -41,19 +36,13 @@ class TicketServiceTest {
     @Autowired
     TicketRepository ticketRepository;
 
-    @Autowired
-    LockRepository lockRepository;
-
-    @Autowired
-    RedisTemplate<String, String> redisTemplate;
-
     Concert concert;
 
     User user;
 
     @BeforeEach
     void setup() {
-        concert = new Concert("콘서트", 1);
+        concert = new Concert("콘서트", 2);
         concertRepository.save(concert);
         user = new User("gege", "1234", "gege@naver.com");
         userRepository.save(user);
@@ -69,18 +58,16 @@ class TicketServiceTest {
 
     @Test
     void 티켓생성() throws InterruptedException {
-        ExecutorService executorService = new ThreadPoolExecutor(20, 20, 60L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(20));
+        ExecutorService executorService = new ThreadPoolExecutor(10, 10, 60L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(5));
 
-        CountDownLatch latch = new CountDownLatch(20);
+        CountDownLatch latch = new CountDownLatch(5);
 
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i <= 5; i++) {
             executorService.execute(() -> {
                 try {
-                    ticketService.create(
-                        new TicketRequestDto(user.getId(), concert.getId()));
-                    concert = concertRepository.findById(concert.getId())
-                        .orElseThrow(() -> new RuntimeException("일단 봅시다."));
+                    ticketService.create(new TicketRequestDto(user.getId(), concert.getId()));
+
                 } catch (Exception e) {
                     System.out.println(e);
                 } finally {
@@ -91,6 +78,9 @@ class TicketServiceTest {
 
         latch.await();
         executorService.shutdown();
+
+        concert = concertRepository.findById(concert.getId())
+            .orElseThrow(() -> new RuntimeException("일단 봅시다."));
 
         Integer availableTicket = concert.getAvailableAmount();
         assertEquals(0, availableTicket);

@@ -4,14 +4,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.interpark.common.entity.BaseEntity;
-import org.springframework.retry.annotation.Retryable;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @Getter
 @Entity
@@ -25,6 +25,7 @@ public class Concert extends BaseEntity {
     private String name;
 
     private int totalAmount;
+
     private int availableAmount;
 
     @Version
@@ -43,10 +44,13 @@ public class Concert extends BaseEntity {
     }
 
 
-    @Transactional
-    @Retryable(maxAttempts = 10)
-    public int sellTicket() {
+    public void sellTicket() throws ObjectOptimisticLockingFailureException {
+        if (this.availableAmount <= 0) {
+            throw new OptimisticLockException("No available tickets left!");
+        }
         this.availableAmount -= 1;
-        return this.availableAmount;
     }
+
+
 }
+
