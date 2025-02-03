@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.interpark.domain.concert.dto.response.ConcertSearchResponseDto;
 import org.example.interpark.domain.concert.service.ConcertService;
-import org.example.interpark.domain.search.service.ConcertPopularSearchService;
+import org.example.interpark.domain.search.service.RedisSearchKeywordService;
 import org.example.interpark.domain.search.service.SearchKeywordService;
 import org.example.interpark.util.Page;
 import org.example.interpark.util.PageQuery;
@@ -21,7 +21,7 @@ public class ConcertController {
 
     private final ConcertService concertService;
     private final SearchKeywordService searchKeywordService;
-    private final ConcertPopularSearchService concertPopularSearchService;
+    private final RedisSearchKeywordService redisSearchKeywordService;
 
     /**
      * Cache 를 적용하지 않은 API
@@ -51,7 +51,7 @@ public class ConcertController {
     @GetMapping("/v2/redis/concerts")
     public ResponseEntity<Page<ConcertSearchResponseDto>> getConcertsByRedis(@RequestParam(required = false) String keyword,
         PageQuery pageQuery) {
-        concertPopularSearchService.incrementSearchCount(keyword);
+        redisSearchKeywordService.incrementSearchCount(keyword);
         return ResponseEntity.status(HttpServletResponse.SC_OK)
             .body(concertService.searchConcertsByCache(keyword, pageQuery));
     }
