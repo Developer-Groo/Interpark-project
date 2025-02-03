@@ -1,11 +1,9 @@
 package org.example.interpark.config;
 
 import java.time.Duration;
-import java.util.Arrays;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.cache.support.CompositeCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -22,6 +20,7 @@ public class CacheConfig {
 
     // Redis Cache 설정
     @Bean
+    @Primary
     public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration redisCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
             .entryTtl(Duration.ofMinutes(10)) // 캐시 TTL 10분
@@ -41,13 +40,4 @@ public class CacheConfig {
         return new ConcurrentMapCacheManager("inMemoryCache");
     }
 
-    // 멀티 캐시 매니저 (Redis + In-Memory Cache 함께 사용)
-    @Primary
-    @Bean
-    public CacheManager cacheManager(RedisCacheManager redisCacheManager,
-        CacheManager localCacheManager) {
-        CompositeCacheManager cacheManager = new CompositeCacheManager();
-        cacheManager.setCacheManagers(Arrays.asList(localCacheManager, redisCacheManager));
-        return cacheManager;
-    }
 }
