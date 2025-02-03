@@ -2,7 +2,6 @@ package org.example.interpark.domain.concert.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ConcertPopularSearchService {
 
-  @Qualifier("redisTemplateV2")
   private final RedisTemplate<String, String> redisTemplateV2;
   private static final String POPULAR_SEARCH_KEY = "popular_keywords"; // ZSET Key
 
