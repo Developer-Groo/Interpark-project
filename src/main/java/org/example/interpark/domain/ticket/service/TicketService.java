@@ -32,6 +32,7 @@ public class TicketService {
         return TicketResponseDto.from(ticket);
     }
 
+    @Transactional
     public CompletableFuture<TicketResponseDto> createAsync(TicketRequestDto ticketRequestDto) {
         if (!ticketRequestDto.isValid()) {
             return CompletableFuture.failedFuture(new RuntimeException("Invalid ticket request"));
@@ -52,10 +53,10 @@ public class TicketService {
             return new Ticket(user, concert);
         });
 
-
         CompletableFuture<Ticket> savedTicketFuture = ticketFuture.thenCompose(ticket -> {
             return lockService.withLock(ticket.getConcert().getId(), () ->
                     CompletableFuture.supplyAsync(() -> {
+                        log.info("Trying to get LOCK: {}", Thread.currentThread().getId());
                         return saveTicketWithTransaction(ticket);
                     })
             );
@@ -64,7 +65,6 @@ public class TicketService {
         return savedTicketFuture.thenApply(TicketResponseDto::from);
     }
 
-    @Transactional
     public Ticket saveTicketWithTransaction(Ticket ticket) {
         Concert concert = concertRepository.findById(ticket.getConcert().getId())
                 .orElseThrow(() -> new RuntimeException("Concert not found"));
