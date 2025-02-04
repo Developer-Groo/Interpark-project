@@ -45,7 +45,7 @@ class TicketServiceTest {
 
     @BeforeEach
     void setUp() {
-        concert = new Concert("콘서트", 1);
+        concert = new Concert("콘서트", 3);
         concertRepository.save(concert);
         user = new User("gege", "1234", "gege@naver.com");
         userRepository.save(user);

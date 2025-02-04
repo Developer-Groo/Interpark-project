@@ -47,7 +47,7 @@ public class TicketService {
 
         CompletableFuture<Ticket> ticketFuture = concertFuture.thenCombine(userFuture, (concert, user) -> {
             if (concert.getAvailableAmount() <= 0) {
-                throw new RuntimeException("Cannot sell ticket. Available amount is less than 0.");
+                throw new RuntimeException("Cannot sell ticket. Available amount is less than 0. before");
             }
             return new Ticket(user, concert);
         });
@@ -68,9 +68,9 @@ public class TicketService {
     public Ticket saveTicketWithTransaction(Ticket ticket) {
         Concert concert = concertRepository.findById(ticket.getConcert().getId())
                 .orElseThrow(() -> new RuntimeException("Concert not found"));
-
+        log.info("lock 획득::::::::::" + Thread.currentThread().getId());
         if (concert.getAvailableAmount() <= 0) {
-            throw new RuntimeException("Cannot sell ticket. Available amount is less than 0.");
+            throw new RuntimeException("Cannot sell ticket. Available amount is less than 0." + Thread.currentThread().getId());
         }
 
         concert.sellTicket();
