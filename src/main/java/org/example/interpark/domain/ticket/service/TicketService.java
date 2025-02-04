@@ -37,7 +37,10 @@ public class TicketService {
         User user = userRepository.findById(ticketRequestDto.userId()).orElseThrow(
             () -> new RuntimeException("Cannot find user id: " + ticketRequestDto.userId()));
 
-
+        /**
+         * Lock 이 걸리기 전 Concert 정보를 먼저 가져와서 availableAmount 양을 검사 시, Lock 이 제대로 동작하지 않습니다.
+         * 그 이유는...
+         */
         try {
             return lockService.withLock(ticketRequestDto.concertId(), () -> {
                 Concert concert = concertRepository.findById(ticketRequestDto.concertId())
