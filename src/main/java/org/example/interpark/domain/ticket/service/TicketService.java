@@ -1,6 +1,5 @@
 package org.example.interpark.domain.ticket.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.interpark.domain.concert.entity.Concert;
@@ -14,8 +13,6 @@ import org.example.interpark.domain.user.entity.User;
 import org.example.interpark.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.CompletableFuture;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,53 +25,50 @@ public class TicketService {
 
     public TicketResponseDto find(int id) {
         Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cannot find ticket id: " + id));
+            .orElseThrow(() -> new RuntimeException("Cannot find ticket id: " + id));
         return TicketResponseDto.from(ticket);
     }
 
-    @Transactional
-    public CompletableFuture<TicketResponseDto> createAsync(TicketRequestDto ticketRequestDto) {
+    public TicketResponseDto create(TicketRequestDto ticketRequestDto) {
         if (!ticketRequestDto.isValid()) {
-            return CompletableFuture.failedFuture(new RuntimeException("Invalid ticket request"));
+            throw new RuntimeException("Invalid ticket request");
         }
 
-        CompletableFuture<Concert> concertFuture = CompletableFuture.supplyAsync(() ->
-                concertRepository.findById(ticketRequestDto.concertId())
-                        .orElseThrow(() -> new RuntimeException("Cannot find concert id: " + ticketRequestDto.concertId())));
+        User user = userRepository.findById(ticketRequestDto.userId()).orElseThrow(
+            () -> new RuntimeException("Cannot find user id: " + ticketRequestDto.userId()));
 
-        CompletableFuture<User> userFuture = CompletableFuture.supplyAsync(() ->
-                userRepository.findById(ticketRequestDto.userId())
-                        .orElseThrow(() -> new RuntimeException("Cannot find user id: " + ticketRequestDto.userId())));
+        try {
+            return lockService.withLock(ticketRequestDto.concertId(), () -> {
+                Concert concert = concertRepository.findById(ticketRequestDto.concertId())
+                    .orElseThrow(() -> new RuntimeException(
+                        "Cannot find concert id: " + ticketRequestDto.concertId()));
 
-        CompletableFuture<Ticket> ticketFuture = concertFuture.thenCombine(userFuture, (concert, user) -> {
-            if (concert.getAvailableAmount() <= 0) {
-                throw new RuntimeException("Cannot sell ticket. Available amount is less than 0. before");
-            }
-            return new Ticket(user, concert);
-        });
+                if (concert.getAvailableAmount() <= 0) {
+                    throw new RuntimeException(
+                        "Cannot sell ticket. Available amount is less than 0.");
+                }
 
-        CompletableFuture<Ticket> savedTicketFuture = ticketFuture.thenCompose(ticket -> {
-            return lockService.withLock(ticket.getConcert().getId(), () ->
-                    CompletableFuture.supplyAsync(() -> {
-                        log.info("Trying to get LOCK: {}", Thread.currentThread().getId());
-                        return saveTicketWithTransaction(ticket);
-                    })
-            );
-        });
-
-        return savedTicketFuture.thenApply(TicketResponseDto::from);
+                return saveTicketWithTransaction(user, concert);
+            });
+        } catch (RuntimeException e) {
+            log.error("Failed to create ticket: {}", e.getMessage());
+            throw e;
+        }
     }
 
-    public Ticket saveTicketWithTransaction(Ticket ticket) {
-        Concert concert = concertRepository.findById(ticket.getConcert().getId())
-                .orElseThrow(() -> new RuntimeException("Concert not found"));
-        log.info("lock 획득::::::::::" + Thread.currentThread().getId());
+    public TicketResponseDto saveTicketWithTransaction(User user, Concert concert) {
+        log.info("lock 획득: Thread ID={}", Thread.currentThread().getId());
+
         if (concert.getAvailableAmount() <= 0) {
-            throw new RuntimeException("Cannot sell ticket. Available amount is less than 0." + Thread.currentThread().getId());
+            throw new RuntimeException("Cannot sell ticket. Available amount is less than 0.");
         }
 
         concert.sellTicket();
         concertRepository.save(concert);
-        return ticketRepository.save(ticket);
+
+        Ticket ticket = new Ticket(user, concert);
+        ticketRepository.save(ticket);
+
+        return TicketResponseDto.from(ticket);
     }
 }

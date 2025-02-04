@@ -6,14 +6,18 @@ import org.example.interpark.domain.ticket.dto.TicketRequestDto;
 import org.example.interpark.domain.ticket.dto.TicketResponseDto;
 import org.example.interpark.domain.ticket.service.TicketService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.concurrent.CompletableFuture;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/concert/{concert_id}/ticket")
 public class TicketController {
+
     private final TicketService service;
 
     @GetMapping("/{id}")
@@ -22,8 +26,7 @@ public class TicketController {
     }
 
     @PostMapping
-    public CompletableFuture<ResponseEntity<TicketResponseDto>> create(@RequestBody TicketRequestDto dto) {
-        return service.createAsync(dto)
-                .thenApply(ticketResponse -> ResponseEntity.ok().body(ticketResponse));
+    public ResponseEntity<TicketResponseDto> create(@RequestBody TicketRequestDto dto) {
+        return ResponseEntity.ok().body(service.create(dto));
     }
 }
