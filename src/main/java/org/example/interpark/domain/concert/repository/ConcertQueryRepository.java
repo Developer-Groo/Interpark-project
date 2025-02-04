@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class ConcertRepositoryV1 {
+public class ConcertQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
@@ -25,7 +25,9 @@ public class ConcertRepositoryV1 {
             builder.and(concert.name.containsIgnoreCase(keyword));
         }
 
-        JPAQuery<Concert> result = queryFactory.selectFrom(concert).where(builder);
+        JPAQuery<Concert> result = queryFactory
+            .selectFrom(concert)
+            .where(builder);
 
         return QuerydslUtil.fetchPage(result, concert, pageable);
     }
