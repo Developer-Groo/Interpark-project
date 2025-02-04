@@ -2,8 +2,6 @@ package org.example.interpark.domain.ticket.service;
 
 import org.example.interpark.domain.concert.entity.Concert;
 import org.example.interpark.domain.concert.repository.ConcertRepository;
-import org.example.interpark.domain.lock.repository.RedisLockRepository;
-import org.example.interpark.domain.lock.service.LockService;
 import org.example.interpark.domain.ticket.dto.TicketRequestDto;
 import org.example.interpark.domain.ticket.repository.TicketRepository;
 import org.example.interpark.domain.user.entity.User;
@@ -35,17 +33,13 @@ class TicketServiceTest {
     TicketRepository ticketRepository;
     @Autowired
     private TicketService ticketService;
-    @Autowired
-    private RedisLockRepository lockRepository;
-    @Autowired
-    private LockService lockService;
 
     private Concert concert;
     private User user;
 
     @BeforeEach
     void setUp() {
-        concert = new Concert("콘서트", 1);
+        concert = new Concert("콘서트", 3);
         concertRepository.save(concert);
         user = new User("gege", "1234", "gege@naver.com");
         userRepository.save(user);

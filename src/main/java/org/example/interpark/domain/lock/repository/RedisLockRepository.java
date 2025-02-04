@@ -1,17 +1,20 @@
 package org.example.interpark.domain.lock.repository;
 
-import io.lettuce.core.SetArgs;
-import io.lettuce.core.api.async.RedisAsyncCommands;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Repository;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class RedisLockRepository {
 
-    private final RedisAsyncCommands<String, String> asyncCommands;
+    private final RedissonClient redissonClient;
 
     private String generateLockKey(int key) {
         return "lock:" + key;
@@ -19,16 +22,33 @@ public class RedisLockRepository {
 
     public CompletableFuture<Boolean> lock(int key) {
         String lockKey = generateLockKey(key);
-        return asyncCommands
-                .set(lockKey, "LOCKED", SetArgs.Builder.nx().px(3000))
-                .toCompletableFuture()
-                .thenApply("OK"::equals);
+        RLock lock = redissonClient.getLock(lockKey);
+
+        return CompletableFuture.supplyAsync(() -> {
+            try{
+                return lock.tryLock(5, 10, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+        });
     }
 
     public CompletableFuture<Boolean> unlock(int key) {
         String lockKey = generateLockKey(key);
-        return asyncCommands.del(lockKey)
-                .toCompletableFuture()
-                .thenApply(deletedCount -> deletedCount > 0);
+        RLock lock = redissonClient.getLock(lockKey);
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                if (lock.isLocked() && lock.isHeldByCurrentThread()) {
+                    log.info("UNLOCK this lock: {}", Thread.currentThread().getId());
+                    lock.unlock();
+                    return true;
+                }
+            } catch (IllegalMonitorStateException e) {
+                return false;
+            }
+            return false;
+        });
     }
 }
