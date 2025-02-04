@@ -34,12 +34,10 @@ public class InitData {
             userService.createUser(user);
         }
 
-//        List<Concert> concertList =
-//                List.of(new Concert("첫번째 콘서트",100),
-//                        new Concert("두번째 콘서트",10),
-//                        new Concert("세번째 콘서트",50)
-//                        );
-//        concertRepository.saveAll(concertList);
+        List<Concert> concertList =
+                List.of(new Concert("첫번째 콘서트",100, 1000)
+                        );
+        concertRepository.saveAll(concertList);
 
     }
 }
