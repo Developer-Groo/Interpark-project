@@ -23,6 +23,7 @@ public class CacheConfig {
     @Primary
     public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration redisCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
+            .computePrefixWith(cacheName -> "concerts:")
             .entryTtl(Duration.ofMinutes(10)) // 캐시 TTL 10분
             .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(
                 new StringRedisSerializer())) // 키 직렬화

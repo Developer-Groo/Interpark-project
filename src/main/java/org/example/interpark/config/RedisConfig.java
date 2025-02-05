@@ -38,17 +38,24 @@ public class RedisConfig {
     public RedisTemplate<String, Object> redisTemplateV3(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
+
+        // 모든 Key, Value를 JSON 직렬화 사용
         template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        // Hash 자료구조도 JSON 직렬화 사용
         template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer()); // JSON 직렬화 적용
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+
         template.afterPropertiesSet();
         return template;
     }
 
+
     @Bean
     public HashOperations<String, String, ConcertSearchResponseDto> hashOperations(
-        RedisTemplate<String, Object> redisTemplate) {
-        return redisTemplate.opsForHash();
+        RedisTemplate<String, Object> redisTemplateV3) {
+        return redisTemplateV3.opsForHash();
     }
 
 }

@@ -20,6 +20,7 @@ public class ConcertService {
 
     private final ConcertQueryRepository concertQueryRepository;
     private final ConcertRepository concertRepository;
+    private final ConcertCacheService concertCacheService;
 
     /**
      * Cache 를 적용하지 않은 콘서트 조회
@@ -66,7 +67,12 @@ public class ConcertService {
         Concert concert = concertRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("해당 콘서트가 없습니다."));
 
+
+        // ID 기반 캐시 삭제
+        concertCacheService.evictConcertCacheById(id);
+
         concert.updateConcert(request.name(), request.totalAmount(), request.availableAmount());
+
         return ConcertResponseDto.from(concert);
     }
 
@@ -76,5 +82,10 @@ public class ConcertService {
     @Transactional
     public void deleteConcert(Integer id) {
         concertRepository.deleteById(id);
+
+        // 캐시삭제
+        concertCacheService.evictConcertCacheById(id);
     }
+
+
 }
