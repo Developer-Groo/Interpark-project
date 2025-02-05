@@ -1,7 +1,6 @@
 package org.example.interpark.domain.user.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.interpark.common.entity.BaseEntity;

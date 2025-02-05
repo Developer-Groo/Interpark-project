@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.interpark.domain.lock.repository.RedisLockRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 @Service
@@ -14,20 +13,18 @@ import java.util.function.Supplier;
 public class LockService {
     private final RedisLockRepository redisLockRepository;
 
-    public <T> CompletableFuture<T> withLock(int key, Supplier<CompletableFuture<T>> logic) {
-        return redisLockRepository.lock(key)
-                .thenCompose(acquired -> {
-                    if (!acquired) {
-                        return CompletableFuture.failedFuture(new IllegalStateException("Cannot get the key: " + key));}
+    public <T> T withLock(int key, Supplier<T> logic) {
+        if (!redisLockRepository.lock(key)) {
+            throw new RuntimeException("Failed to acquire lock for key: " + key + "::::" + Thread.currentThread().getId());
+        }
 
-                    return logic.get()
-                            .whenComplete((result, error) -> {
-                                redisLockRepository.unlock(key)
-                                        .exceptionally(unlockError -> {
-                                            log.error("Unlock failed for key {}: {}", key, unlockError.getMessage());
-                                            return null;
-                                        });
-                            });
-                });
+        try {
+            return logic.get();
+        } catch (Exception e) {
+            log.error(" ::::" + Thread.currentThread().getId(), e);
+            throw new RuntimeException(e);
+        } finally {
+            redisLockRepository.unlock(key);
+        }
     }
 }

@@ -8,9 +8,7 @@ import org.example.interpark.domain.concert.repository.ConcertRepository;
 import org.example.interpark.domain.user.Dto.UserRequestDto;
 import org.example.interpark.domain.user.service.UserService;
 import org.springframework.stereotype.Component;
-import org.example.interpark.domain.user.entity.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -34,12 +32,11 @@ public class InitData {
             userService.createUser(user);
         }
 
-//        List<Concert> concertList =
-//                List.of(new Concert("첫번째 콘서트",100),
-//                        new Concert("두번째 콘서트",10),
-//                        new Concert("세번째 콘서트",50)
-//                        );
-//        concertRepository.saveAll(concertList);
+        List<Concert> concertList =
+                List.of(new Concert("첫번째 콘서트",1000, 1000),
+                        new Concert("두번째 콘서트",1000, 1000)
+                        );
+        concertRepository.saveAll(concertList);
 
     }
 }
