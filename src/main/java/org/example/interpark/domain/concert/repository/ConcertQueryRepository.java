@@ -1,7 +1,5 @@
 package org.example.interpark.domain.concert.repository;
 
-import static org.example.interpark.domain.concert.entity.QConcert.*;
-
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -11,6 +9,8 @@ import org.example.interpark.util.QuerydslUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+
+import static org.example.interpark.domain.concert.entity.QConcert.concert;
 
 @Repository
 @RequiredArgsConstructor

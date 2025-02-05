@@ -1,7 +1,8 @@
 package org.example.interpark.domain.search.dto.response;
 
-import java.util.List;
 import org.example.interpark.domain.search.entity.SearchKeyword;
+
+import java.util.List;
 
 public record SearchKeywordResponseDto(List<String> contents) {
 

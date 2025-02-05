@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.interpark.domain.lock.repository.RedisLockRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 @Service
