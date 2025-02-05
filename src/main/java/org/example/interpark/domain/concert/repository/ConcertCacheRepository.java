@@ -18,7 +18,7 @@ public class ConcertCacheRepository {
 
     private static final String CACHE_PREFIX = "concerts:";
     private final HashOperations<String, String, ConcertSearchResponseDto> hashOperations;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplateByHash;
 
     /**
      * Redis 에 검색 결과 저장
@@ -41,7 +41,7 @@ public class ConcertCacheRepository {
         hashOperations.putAll(cacheKey, concertMap);
 
         // TTL 설정 (10분)
-        redisTemplate.expire(cacheKey, 10, TimeUnit.MINUTES);
+        redisTemplateByHash.expire(cacheKey, 10, TimeUnit.MINUTES);
     }
 
     /**
@@ -60,7 +60,7 @@ public class ConcertCacheRepository {
      * 특정 키워드의 캐시 삭제
      */
     public void deleteConcertCache(String keyword) {
-        redisTemplate.delete(CACHE_PREFIX + keyword);
+        redisTemplateByHash.delete(CACHE_PREFIX + keyword);
     }
 
 }
