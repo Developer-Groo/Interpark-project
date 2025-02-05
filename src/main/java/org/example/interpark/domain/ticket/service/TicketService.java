@@ -9,6 +9,7 @@ import org.example.interpark.domain.ticket.entity.Ticket;
 import org.example.interpark.domain.ticket.repository.TicketRepository;
 import org.example.interpark.domain.user.entity.User;
 import org.example.interpark.domain.user.repository.UserRepository;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ public class TicketService {
         return TicketResponseDto.from(ticket);
     }
 
-//    @Transactional
+    //    @Transactional
 //    @Retryable(maxAttempts = 10)
 //    public TicketResponseDto create(TicketRequestDto ticketRequestDto) {
 //        if (!ticketRequestDto.isValid()) {
@@ -52,14 +53,18 @@ public class TicketService {
 //        return TicketResponseDto.from(ticket);
 //
 //    }
-
-    @Transactional
-    @Retryable(maxAttempts = 10)
+    @Retryable(maxAttempts = 10, backoff = @Backoff(delay = 100))
     public TicketResponseDto create(TicketRequestDto ticketRequestDto) {
         if (!ticketRequestDto.isValid()) {
             throw new RuntimeException("Invalid ticket request");
         }
 
+        return TicketResponseDto.from(LockCreate(ticketRequestDto));
+
+    }
+
+    @Transactional
+    public Ticket LockCreate(TicketRequestDto ticketRequestDto) {
         Concert concert = concertRepository.findById(ticketRequestDto.concertId()).orElseThrow(
             () -> new RuntimeException("Cannot find concert id: " + ticketRequestDto.concertId()));
 
@@ -74,9 +79,7 @@ public class TicketService {
         concertRepository.save(concert);
         Ticket ticket = new Ticket(user, concert);
         ticket = ticketRepository.save(ticket);
-
-        return TicketResponseDto.from(ticket);
-
+        return ticket;
     }
 
 

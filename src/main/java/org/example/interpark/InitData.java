@@ -34,6 +34,9 @@ public class InitData {
             userService.createUser(user);
         }
 
+        Concert concert = new Concert("ddd", 100);
+        concertRepository.save(concert);
+
 //        List<Concert> concertList =
 //                List.of(new Concert("첫번째 콘서트",100),
 //                        new Concert("두번째 콘서트",10),
