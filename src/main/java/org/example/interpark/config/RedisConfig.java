@@ -14,21 +14,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 @EnableCaching
 public class RedisConfig {
-
-    @Bean(destroyMethod = "shutdown")
-    public RedisClient redisClient() {
-        return RedisClient.create("redis://localhost:6379");
-    }
-
-    @Bean(destroyMethod = "close")
-    public StatefulRedisConnection<String, String> connection(RedisClient redisClient) {
-        return redisClient.connect();
-    }
-
-    @Bean
-    public RedisAsyncCommands<String, String> redisAsyncCommands(StatefulRedisConnection<String, String> connection) {
-        return connection.async();
-    }
   
     @Bean
     public RedisTemplate<String, Integer> redisTemplate(RedisConnectionFactory connectionFactory) {
