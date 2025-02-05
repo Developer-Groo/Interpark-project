@@ -9,12 +9,12 @@ services:
     depends_on:
       - mysql
       - redis
-#    environment:
-#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/Interpark
-#      SPRING_DATASOURCE_USERNAME: root
-#      SPRING_DATASOURCE_PASSWORD: 123456879
-#      SPRING_DATA_REDIS_HOST: redis
-#      SPRING_DATA_REDIS_PORT: 6379
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/Interpark
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456789
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
     networks:
       - mynetwork
 
@@ -23,12 +23,12 @@ services:
     container_name: mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 123456879  # MySQL root 비밀번호
+      MYSQL_ROOT_PASSWORD: 123456789  # MySQL root 비밀번호
       MYSQL_DATABASE: Interpark       # 사용할 데이터베이스 (스키마)
-      MYSQL_USER: Interpark_user    # 추가 사용자
-      MYSQL_PASSWORD: 123456879       # 추가 사용자의 비밀번호
+#      MYSQL_USER: Interpark_user    # 추가 사용자
+#      MYSQL_PASSWORD: 123456789       # 추가 사용자의 비밀번호
     ports:
-      - "13306:3306"
+      - "3306:3306"
     networks:
       - mynetwork
 
