@@ -50,7 +50,6 @@ public class ConcertCacheService {
     /**
      * Redis Hash 기반 검색
      */
-    @Transactional
     public List<ConcertSearchResponseDto> searchConcertsByHash(String keyword,
         PageQuery pageQuery) {
         // Redis 캐시에서 데이터 조회
