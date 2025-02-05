@@ -15,14 +15,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ConcertCacheScheduler {
 
-    private final RedisTemplate<String, String> redisTemplateV2;
+    private final RedisTemplate<String, String> redisTemplate;
 
     //   @Scheduled(cron = "0 */1 * * * *")
     @Scheduled(cron = "0 0 12 * * ?")
     public void clearCacheAtMidnight() {
         HashSet<String> keysToDelete = new HashSet<>();
 
-        RedisConnection connection = Objects.requireNonNull(redisTemplateV2.getConnectionFactory())
+        RedisConnection connection = Objects.requireNonNull(redisTemplate.getConnectionFactory())
             .getConnection();
 
         ScanOptions options = ScanOptions.scanOptions()
@@ -37,7 +37,7 @@ public class ConcertCacheScheduler {
         log.info("삭제할 키 목록 {}", keysToDelete);
 
         if (!keysToDelete.isEmpty()) {
-            redisTemplateV2.delete(keysToDelete);
+            redisTemplate.delete(keysToDelete);
             log.info("모든 검색 캐시 데이터 삭제");
         }
     }
