@@ -11,7 +11,6 @@ import org.example.interpark.domain.ticket.entity.Ticket;
 import org.example.interpark.domain.ticket.repository.TicketRepository;
 import org.example.interpark.domain.user.entity.User;
 import org.example.interpark.domain.user.repository.UserRepository;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,10 +27,11 @@ public class TicketService {
 
     public TicketResponseDto find(int id) {
         Ticket ticket = ticketRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Cannot find ticket id: " + id));
+                .orElseThrow(() -> new RuntimeException("Cannot find ticket id: " + id));
         return TicketResponseDto.from(ticket);
     }
 
+    @Transactional
     public TicketResponseDto create(TicketRequestDto ticketRequestDto) {
         if (!ticketRequestDto.isValid()) {
             throw new RuntimeException("Invalid ticket request");
@@ -39,7 +39,8 @@ public class TicketService {
 
         int currentTicketAmount = concertRepository.findLatestAvailableAmount(ticketRequestDto.concertId());
         if (currentTicketAmount <= 0) {
-            throw new RuntimeException("All tickets had sell.");}
+            throw new RuntimeException("All tickets had sell.");
+        }
 
         User user = userRepository.findById(ticketRequestDto.userId()).orElseThrow(
                 () -> new RuntimeException("Cannot find user id: " + ticketRequestDto.userId()));
@@ -49,7 +50,7 @@ public class TicketService {
                 Concert concert = concertRepository.findById(ticketRequestDto.concertId())
                         .orElseThrow(() -> new RuntimeException("Cannot find concert id: " + ticketRequestDto.concertId()));
 
-                if(concert.getAvailableAmount() <= 0)
+                if (concert.getAvailableAmount() <= 0)
                     throw new RuntimeException("Cannot sell ticket. Has no ticket.");
 
                 return sellTicket(concert, user);
@@ -59,6 +60,7 @@ public class TicketService {
             throw e;
         }
     }
+
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public TicketResponseDto sellTicket(Concert concert, User user) {
