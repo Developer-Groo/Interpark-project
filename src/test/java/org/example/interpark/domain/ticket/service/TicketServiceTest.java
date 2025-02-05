@@ -2,6 +2,7 @@ package org.example.interpark.domain.ticket.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.example.interpark.domain.concert.entity.Concert;
 import org.example.interpark.domain.concert.repository.ConcertRepository;
 import org.example.interpark.domain.ticket.dto.TicketRequestDto;
+import org.example.interpark.domain.ticket.entity.Ticket;
 import org.example.interpark.domain.ticket.repository.TicketRepository;
 import org.example.interpark.domain.user.entity.User;
 import org.example.interpark.domain.user.repository.UserRepository;
@@ -79,6 +81,9 @@ class TicketServiceTest {
 
         Concert updatedConcert = concertRepository.findById(concert.getId())
             .orElseThrow(() -> new RuntimeException("Concert not found"));
+        List<Ticket> tickets = ticketRepository.findAll();
+
+        assertEquals(3, tickets.size());
         assertEquals(0, updatedConcert.getAvailableAmount());
     }
 }

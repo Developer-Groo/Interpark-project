@@ -1,6 +1,5 @@
 package org.example.interpark.domain.ticket.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.interpark.domain.concert.entity.Concert;
@@ -13,6 +12,8 @@ import org.example.interpark.domain.ticket.repository.TicketRepository;
 import org.example.interpark.domain.user.entity.User;
 import org.example.interpark.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,14 +41,13 @@ public class TicketService {
             () -> new RuntimeException("Cannot find user id: " + ticketRequestDto.userId()));
 
         /**
-         *
          Concert beforeCheckConcert = concertRepository.findById(ticketRequestDto.concertId())
             .orElseThrow(() -> new RuntimeException("Cannot find concert id: " + ticketRequestDto.concertId()));
          if(beforeCheckConcert.getAvailableAmount() <= 0)
             throw new RuntimeException("Cannot buy concert ticket.");
-
+         /**
          * Lock 이 걸리기 전 Concert 정보를 먼저 가져와서 availableAmount 양을 검사 시, Lock 이 제대로 동작하지 않습니다.
-         * 그 이유는...
+         * 위 코드 주석해제 시 맛이 간다는 뜻입니다. 그 이유는... ㅋㅋ 나만알지롱
          */
 
         try {
@@ -61,11 +61,25 @@ public class TicketService {
                         "Cannot sell ticket. Available amount is less than 0.");
                 }
 
-                return transactionService.sellTicket(concert, user);
+                return sellTicket(concert, user);
             });
         } catch (RuntimeException e) {
             log.error("Failed to create ticket: {}", e.getMessage());
             throw e;
         }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public TicketResponseDto sellTicket(Concert concert, User user) {
+        if (concert.getAvailableAmount() <= 0) {
+            throw new RuntimeException("Cannot sell ticket. Available amount is less than 0.");
+        }
+        concert.sellTicket();
+        concertRepository.save(concert);
+
+        Ticket ticket = new Ticket(user, concert);
+        ticketRepository.saveAndFlush(ticket);
+
+        return TicketResponseDto.from(ticket);
     }
 }

@@ -23,6 +23,7 @@ public class RedisLockRepository {
         RLock lock = redissonClient.getLock(lockKey);
 
         try {
+            log.info("TRY to get LOCK: {}", Thread.currentThread().getId());
             return lock.tryLock(5, 10, TimeUnit.SECONDS);
         } catch (Exception e) {
             Thread.currentThread().interrupt();

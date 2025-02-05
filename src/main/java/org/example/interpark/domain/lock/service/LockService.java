@@ -21,6 +21,9 @@ public class LockService {
 
         try {
             return logic.get();
+        } catch (Exception e) {
+            log.error(" ::::" + Thread.currentThread().getId(), e);
+            throw new RuntimeException(e);
         } finally {
             redisLockRepository.unlock(key);
         }
