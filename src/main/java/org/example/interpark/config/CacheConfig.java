@@ -24,7 +24,7 @@ public class CacheConfig {
     @Primary
     public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration redisCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-            .entryTtl(Duration.ofMinutes(10)) // 캐시 TTL 10분
+            .entryTtl(Duration.ofMinutes(2)) // 캐시 TTL 2분
             .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(
                 new StringRedisSerializer())) // 키 직렬화
             .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(

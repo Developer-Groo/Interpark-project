@@ -41,8 +41,8 @@ public class ConcertCacheRepository {
 
         hashOperations.putAll(cacheKey, concertMap);
 
-        // TTL 설정 (10분)
-        redisTemplateByHash.expire(cacheKey, 10, TimeUnit.MINUTES);
+        // TTL 설정 (2분)
+        redisTemplateByHash.expire(cacheKey, 2, TimeUnit.MINUTES);
     }
 
     /**
