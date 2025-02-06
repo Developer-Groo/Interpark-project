@@ -53,7 +53,7 @@ public class TicketService {
 //        return TicketResponseDto.from(ticket);
 //
 //    }
-    @Retryable(maxAttempts = 10, backoff = @Backoff(delay = 100))
+    @Retryable(maxAttempts = 10, backoff = @Backoff(delay = 1000))
     public TicketResponseDto create(TicketRequestDto ticketRequestDto) {
         if (!ticketRequestDto.isValid()) {
             throw new RuntimeException("Invalid ticket request");
