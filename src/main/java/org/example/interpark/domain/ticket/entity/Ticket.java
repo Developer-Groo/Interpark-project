@@ -12,15 +12,9 @@ import org.example.interpark.domain.user.entity.User;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@SequenceGenerator(
-        name = "ticket_seq_generator",
-        sequenceName = "ticket_seq",
-        initialValue = 1,
-        allocationSize = 1000
-)
 public class Ticket extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ticket_seq_generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne
