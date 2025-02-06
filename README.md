@@ -10,7 +10,7 @@
 - [🛠 Technology](#-Technology)
 - [🎯 Features](#-Features)
 - [🔗 ERD](#-ERD)
-- [🔥 Trouble Shouting](#-Trouble-Shouting)
+- [🔥 Project Doc](#-Project-Doc)
 
 <br>
 
@@ -115,6 +115,12 @@ erDiagram
 ~~~
 
 <br>
-<br>
 
-## 🔥 Trouble Shouting
+## 🔥 Project Doc
+
+- [Notion Link](https://teamsparta.notion.site/10-248ee9d389bb42b3bc957e69ea13d41b?pvs=25)
+
+
+
+
+
