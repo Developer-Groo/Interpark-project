@@ -18,7 +18,7 @@
 |**우현**|**혁규**|**진영**|**희현**|
 |-------|-------|-------|-------|
 |<img src="https://github.com/Developer-Nova/Sec19-Local-Data-Persistance_ByAngela/assets/123448121/17a2ba3b-a618-4ac8-93b9-0d0e02c19c78" width="110" height="110">|
-|[GitHub](https://github.com/Developer-Groo)|
+|[GitHub](https://github.com/Developer-Groo)|[GitHub](https://github.com/saintym)|[GitHub](https://github.com/dllll2)|[GitHub](https://github.com/HEEHYUN0221)|
 
 <br>
 
@@ -45,10 +45,10 @@
 |--------------|--------|
 | **Backend** | Java 17, Spring Boot 3.x, JPA, QueryDSL |
 | **DB** | MySQL 8.0, Redis |
-| **Cache** | Caffeine Cache, Redis Cache |
-| **Concurrency Control** | Redis Lock, MySQL Pessimistic Lock |
-| **Testing** | JUnit5, Testcontainers, MockMvc |
-| **DevOps** | Docker, GitHub Actions, AWS EC2 |
+| **Cache** | Spring Cache, Redis Cache |
+| **Concurrency Control** | Redis Lock |
+| **Testing** | JUnit5, MockMvc |
+| **DevOps** | Docker |
 
 <br>
 
@@ -64,12 +64,11 @@
 
 ### **✅ 성능 최적화 (Cache 적용)**
 - **검색 API v1**: **In-memory Cache 적용 (`@Cacheable`)**
-- **검색 API v2**: Redis 기반 **Remote Cache 적용 (선택 기능)**
+- **검색 API v2**: Redis 기반 **Remote Cache 적용**
 
 ### **✅ 동시성 제어**
 - 동시 티켓 예매 시 **Race Condition 방지**
 - **Redis Lock을 사용하여 동시성 이슈 해결**
-- **MySQL 기반의 Pessimistic Lock 적용 (선택 기능)**
 
 <br>
 
