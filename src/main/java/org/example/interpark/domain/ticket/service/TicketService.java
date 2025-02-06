@@ -31,7 +31,6 @@ public class TicketService {
         return TicketResponseDto.from(ticket);
     }
 
-    @Transactional
     public TicketResponseDto create(TicketRequestDto ticketRequestDto) {
         if (!ticketRequestDto.isValid()) {
             throw new RuntimeException("Invalid ticket request");
